@@ -1,0 +1,69 @@
+@extends('admin.layout')
+@section('title','نمایش کاربرها')
+@section('content')
+    {{--<style>--}}
+        {{--td:hover a {--}}
+            {{--/*top   : -20px;*/--}}
+            {{--color : #4eacff;--}}
+            {{--background-color: #fff;--}}
+            {{--box-shadow : 0 0 5px 0 rgba(255, 255, 255, 0.7);--}}
+            {{--transition : all .4s;--}}
+        {{--}--}}
+    {{--</style>--}}
+        <div class="box-body table-responsive">
+
+                    <table id="gent" class="table table-bordered table-striped box-footer clearfix ">
+                        <thead>
+                        <tr>
+                            <th style="direction:rtl;text-align:right;">تصویر</th>
+                            <th style="direction:rtl;text-align:right;">نام و نام خانوادگی</th>
+                            <th style="direction:rtl;text-align:right;">نام کاربری</th>
+                            <th style="direction:rtl;text-align:right;">کد کاربری</th>
+                            <th style="direction:rtl;text-align:right;">جنسیت</th>
+                            <th style="direction:rtl;text-align:right;">تحصیلات</th>
+                            <th style="direction:rtl;text-align:right;">نام مرکز</th>
+                            <th style="direction:rtl;text-align:right;">گروه</th>
+                            <th style="direction:rtl;text-align:right;">عملیات</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        @foreach($show_user as $sU)
+                            <tr>
+                                <td><img STYLE="width: 25%; height: auto" src="{{asset($sU->image)}}"></td>
+                                <td>{{$sU->name}}</td>
+                                <td>{{$sU->email}}</td>
+                                <td>{{$sU->agent}}</td>
+                                <td> @if($sU->sex == 1)مرد @else زن @endif </td>
+                                <td>{{$sU->grade}}</td>
+                                <td>{{$sU->zoon}}</td>
+                                <td>{{$sU->group}}</td>
+                                <td>
+
+                                    <a @if(Auth::user()->privilege == 1 || Auth::user()->privilege == 5 || Auth::user()->id == $sU->id) href="{{asset('admin/edit_users?id=')}}{{$sU->id}}" class="btn btn-warning btn-xs glyphicon glyphicon-edit" @endif></a>
+                                    <a @if(Auth::user()->privilege == 1 || Auth::user()->privilege == 5) onclick="return confirm('برای پاک کردن خاطرجمع هستید؟')" href="{{asset('admin/dell_users?id=')}}{{$sU->id}}" class="btn btn-danger btn-xs glyphicon glyphicon-trash" @endif></a>
+
+                                </td>
+
+                            </tr>
+
+                        @endforeach
+
+
+                        </tbody>
+                        <tfoot>
+                        <tr>
+
+                        </tr>
+                        </tfoot>
+
+                    </table>
+
+        </div>
+
+
+
+
+
+@endsection
