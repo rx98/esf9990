@@ -134,7 +134,7 @@
                     </a>
                     <ul class="treeview-menu">
                         <li><a href="{{asset('admin/show_users')}}"><i class="fa fa-user-circle"></i>مدیریت کاربران</a></li>
-                        @if(Auth::user()->privilege == 5)
+                        @if(Auth::user()->privilege == 1 ||Auth::user()->privilege == 5)
                         <li><a href="{{asset('admin/zoon_group')}}"><i class="fa fa-users"></i> مدیریت گروه‌ها و مراکز</a></li>
                         @endif
                         <li><a href="{{asset('admin/import')}}"><i class="fa fa-file-excel-o"></i> وارد کردن داده از اکسل</a></li>

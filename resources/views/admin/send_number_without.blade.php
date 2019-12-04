@@ -39,7 +39,12 @@
                             {{ session('success') }}
                         </div>
                     @endif
-                    @if ($errors->any())
+                    @if(session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                    @endif
+                    {{-- @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul>
                                 @foreach ($errors->all() as $error)
@@ -47,9 +52,11 @@
                                 @endforeach
                             </ul>
                         </div>
-                    @endif
+                    @endif --}}
                     <form method="POST" action="{{asset('admin/sendno')}}" onsubmit="return checkForm(this);">
                         @csrf
+
+                        {{-- <input id="user_id" type="hidden" value="1" name="user_id"> --}}
 
                         <div class="form-group row">
                             <label for="agent" class="col-md-4 col-form-label text-md-right"></label>

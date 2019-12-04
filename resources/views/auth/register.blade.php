@@ -46,7 +46,7 @@
                             <div class="col-md-6">
                                 <select id="sex" type="checkbox" class="form-control{{ $errors->has('sex') ? ' is-invalid' : '' }}" name="sex" value="{{ old('sex') }}" required>
                                     <option selected value="1">مرد</option>
-                                    <option value="">زن</option>
+                                    <option value="0">زن</option>
                                 </select>
                                 @if ($errors->has('sex'))
                                     <span class="invalid-feedback" role="alert">

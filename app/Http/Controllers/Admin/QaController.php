@@ -6,6 +6,7 @@ use App\Imports\QualityImport;
 use App\InternalQa;
 use App\Quality;
 use App\Agent;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -79,8 +80,13 @@ class QaController extends Controller
 
     public function qualityShow(Request $request){
         $referesh= null;
-
-        $group= Auth::user()->group;
+        $users=User::where('position',Auth::user()->group )->get();
+            $group= Auth::user()->group;
+            if($request->allzoon){
+                $users=User::where('zoon',Auth::user()->zoon )->get();
+            }elseif($request->zoons){
+                $users=User::where('zoon',$request->zoons )->get();
+            }
         $agent= Agent::where('position',$group)->get();
         $agent_select= Agent::where('position',$group)->where('status',1)->get('agent');
 
@@ -89,33 +95,32 @@ class QaController extends Controller
         $latin_num = range(0, 9);
 
         $dateFrom= $request->from;
-        //$dateFrom=str_replace($persian_num, $latin_num, $dateFrom);
 
 
         $dateUpTo= $request->upTo;
-        //$dateUpTo=str_replace($persian_num, $latin_num, $dateUpTo);
 
         Session::put('dateFrom', $dateFrom);
 
         Session::put('dateUpTo', $dateUpTo);
 
-
-
-
         if ($request->Communicated){
-            $qaShow= InternalQa::whereIn('agent',$agent_select)
+            $qaShow= InternalQa::whereIn('agent',$request->agent ?? [])
                 ->whereBetween('datelisten',[$dateFrom, $dateUpTo])->get();
         }else{
-            $qaShow= InternalQa::whereIn('agent',$agent_select)
+            $qaShow= InternalQa::whereIn('agent',$request->agent ?? [])
                 ->whereBetween('datelisten',[$dateFrom, $dateUpTo])
                 ->where('Communicated', null)->get();
         }
         Session::put('qaShow', $qaShow);
+        Session::put('agent', $agent);
+        Session::put('users', $users);
+        $url=url()->full();
+        Session::put('url', $url);
 
-        //$this->quality_update($dateFrom, $dateUpTo);
 
 
-        return view('admin.quality_show', compact('dateFrom', 'dateUpTo', 'qaShow', 'referesh'));
+
+        return view('admin.quality_show', compact('dateFrom', 'dateUpTo', 'qaShow', 'referesh', 'users'));
     }
 
     public function qualityedit(Request $request){
@@ -125,7 +130,6 @@ class QaController extends Controller
 
     public function quality_update(Request $request){
 
-        //InternalQa::where('id',$request->id)
         DB::table('internal_qas')->where('id',$request->id)
         ->update([
             'agent'=> $request->agent,
@@ -149,27 +153,11 @@ class QaController extends Controller
             'comment'=> $request->comment,
             'highlight'=> $request->highlight,
             ]);
-        //dd($data);
-        $id=$request->id;
-        $dateFrom= Session::get('dateFrom');
-        $dateUpTo= Session::get('dateUpTo');
-        $referesh= 1;
-        //$qaShow= Session::get('qaShow');
-        $group= Auth::user()->group;
-        $agent_select= Agent::where('position',$group)->where('status',1)->get('agent');
-        if ($request->Communicated){
-            $qaShow= InternalQa::whereIn('agent',$agent_select)
-                ->whereBetween('datelisten',[$dateFrom, $dateUpTo])->get();
-        }else{
-            $qaShow= InternalQa::whereIn('agent',$agent_select)
-                ->whereBetween('datelisten',[$dateFrom, $dateUpTo])
-                ->where('Communicated', null)->get();
-        }
 
+        $url=Session::get('url');
+        $url = substr($url, 25);
 
-
-//        return redirect('admin/quality_show')->withInput();
-        return view('admin.quality_show', compact('dateFrom', 'dateUpTo', 'qaShow', 'id', 'referesh'));
+return redirect($url);
 
 
     }
@@ -179,9 +167,13 @@ class QaController extends Controller
         return back();
     }
     public function qualityCommunicatededit(Request $request){
+        $dateFrom= Session::get('dateFrom');
+        $dateUpTo= Session::get('dateUpTo');
+        $agent=Session::get('agent');
+        $qaShow=Session::get('qaShow');
+        $users=Session::get('users');
         $chComId = $request->id;
         $Communicated= InternalQa::find($chComId);
-        //dd($Communicated->Communicated);
         if ($Communicated->Communicated){
         InternalQa::find($chComId)->update([
             'Communicated' => null
@@ -189,7 +181,8 @@ class QaController extends Controller
             InternalQa::find($chComId)->update([
                 'Communicated' => 1
             ]);}
-        return back();
+            return view('admin.quality_show', compact('dateFrom', 'dateUpTo', 'qaShow', 'id', 'referesh', 'agent', 'users'));
+
     }
 
 

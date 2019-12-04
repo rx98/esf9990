@@ -24,9 +24,18 @@ class AgentController extends Controller
         return view('admin.send_no');
     }
     public function storeno(Request $request){
-//        dd($request);
+if($request->agent){
+    $userId=User::where('agent',$request->agent)->first()->id ?? 'error';
+if($userId == 'error'){
+    return back()->with(['error' => 'کد پرسنلی خود را صحیح وارد کنید!']);
+
+}
+//dd($userId);
+}else{
+$userId=$request->user_id;
+}
         $storenumber= new SendNo();
-        $storenumber->user_id = $request->user_id;
+        $storenumber->user_id = $userId;
         $storenumber->number = $request->number;
         $storenumber->comment = $request->comment;
         $storenumber->agent = $request->agent;
@@ -50,17 +59,22 @@ return redirect('admin/view_no');
 }
 
     public function viewno(Request $request){
+        $users=User::where('zoon',Auth::user()->zoon)->pluck('id')->toArray();
+
         if($request->id){
             $select_no=SendNo::where('id', $request->id)->first();
             //dd($select_no);
-        }
-        if (Auth::user()->zoon === 'MCI' || Auth::user()->privilege === 3){
-            $viewNo= SendNo::whereIN('status',[1, 2, 3])->get();
         }else{
-            $users=User::where('zoon',Auth::user()->zoon)->pluck('id')->toArray();
-//dd($users);
-            $viewNo= SendNo::whereIn('user_id',$users)->get();//مشاهده تفکیکی برای هر زون اصلاح شود.
-//dd($viewNo);
+            $select_no=null;
+        }
+
+        if (Auth::user()->zoon === 'MCI' || Auth::user()->privilege === 3){
+            $viewNo= SendNo::whereIN('status',[1, 2, 3])->paginate('10');
+        }elseif ($request->number){
+
+            $viewNo=SendNo::whereIn('user_id',$users)->where('number','like','%'.$request->number.'%')->paginate('10');
+        }else{
+            $viewNo= SendNo::whereIn('user_id',$users)->paginate('10');//مشاهده تفکیکی برای هر زون اصلاح شود.
 
         }
         return view('admin.view_no', compact('viewNo', 'select_no'));
@@ -72,22 +86,7 @@ return redirect('admin/view_no');
         return back();
 
     }
-//    public function select_date(){
-//        $agents= Agent::all();
-//
-//        $yy = Verta::now()->year.'/'.Verta::now()->month.'/'.Verta::now()->day;
-//        $y = Verta::now()->year;
-//        $m = Verta::now()->month;
-//        $d = Verta::now()->day;
-//        if ($d >= 30 && $d < 3){
-//            $totalCall= AgentPerformanceReport::whereIn('agent', $agents)
-//                ->whereBetween('Date', [])
-//                ->get('CountofAnswredCallsWithTalkTimeGrThanTenSecond');
-//        }
-//        dd($d);
-//
-//        return view('admin.select_date');
-//    }
+
 
     public function selectDateVacation(){
         $user= Auth::user()->id;

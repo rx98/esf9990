@@ -51,12 +51,34 @@
                         <h3 class="box-title">شماره‌های ارسال شده توسط کارشناسان پاسخگو</h3>
 
                         <div class="box-tools">
-                            <div class="input-group input-group-sm" style="width: 150px;">
-                                <input type="text" name="table_search" class="form-control pull-right" placeholder="جستجو">
+                            <div class="input-group input-group-sm" style="width: 280px;">
+                                {{-- <input type="text" name="table_search" class="form-control pull-right" placeholder="جستجو"> --}}
 
-                                <div class="input-group-btn">
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                </div>
+                                <form method="get" action="{{asset('/admin/view_no')}}">
+                                    <div style="margin-top: 10px">
+                                        <label for="number">شماره</label>
+                                        <input value="{{$_GET['number'] ?? ''}}" type="number" id="number" name="number" placeholder="جستجو">
+
+                                        <span>
+                                                <button type="submit" class="btn btn-default btn-xs"><i class="fa fa-search"></i></button>
+                                            </span>
+                                        {{-- <label for="status">وضعیت</label>
+                                        <select name="status">
+                                            <option value="1"></option>
+                                            <option value="0"> </option>
+                                        </select>
+                                        <label for="number"></label>
+
+                                        <select name="number">
+                                                @foreach($viewNo as $no)
+                                                    <option value="{{$no->id}}">{{$no->name}}</option>
+                                                @endforeach
+
+                                        </select> --}}
+                                        <a href="{{asset('/admin/view_no')}}" type="submit" class="btn btn-default btn-xs"><i class="fa fa-close"></i></a>
+
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -99,8 +121,8 @@
 
                                     <td>
                                         <a href="@if(Auth::user()->privilege == 3)# @else {{asset('admin/send_box?id=')}}{{$vi->id}} @endif" class=" btn btn-@if($vi->status == null)default @elseif($vi->status == 1)warning @elseif($vi->status == 2)danger @elseif($vi->status == 3)success @endif btn-xs glyphicon glyphicon-send"></a>
-                                        <a href="{{asset('admin/view_no?id=')}}{{$vi->id}}" class=" btn btn-info btn-xs glyphicon glyphicon-folder-open"></a>
-                                        <a href=" @if(Auth::user()->privilege == 3)# @else{{asset('admin/del_no?id=')}}{{$vi->id}} @endif" class=" btn btn-danger btn-xs glyphicon glyphicon-trash"></a>
+                                    <a href="{{asset('admin/view_no?id=')}}{{$vi->id}}&page={{$_REQUEST['page'] ?? ''}}" class=" btn btn-info btn-xs glyphicon glyphicon-folder-open"></a>
+                                        <a href=" @if(Auth::user()->privilege == 3)# @else{{asset('admin/del_no?id=')}}{{$vi->id}}&page={{$_REQUEST['page'] ?? ''}} @endif" class=" btn btn-danger btn-xs glyphicon glyphicon-trash"></a>
                                     </td>
                                     <td></td>
 
@@ -115,6 +137,7 @@
 
 
                         </table>
+                        {{ $viewNo->appends($_GET)->links() }}
                     </div>
                     <!-- /.box-body -->
                 </div>

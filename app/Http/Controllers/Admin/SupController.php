@@ -6,6 +6,7 @@ use App\Agent;
 use App\AgentPerformanceReport;
 
 use App\AgentGroupSummaryReport;
+use App\group;
 use App\Imports\AgentGroupProformanceReportImport;
 use App\Imports\AgentGroupSummaryReportImport;
 use App\Imports\AgentPerformanceReportImport;
@@ -17,6 +18,7 @@ use Carbon\Carbon;
 use function Composer\Autoload\includeFile;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\zoon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -58,22 +60,9 @@ class SupController extends Controller
 
 
 
-//    public function getDate(){
-//
-//        return view('admin.get_date');
-//    }
-
-//    public function sendDate(Request $request){
-//
-//
-//        return view('admin.view', compact('date'));
-//
-//    }
 
     public function view(Request $request){
-        if (Auth::user() == null){
-            return view('auth.login');
-        }
+
             $users=User::where('position',Auth::user()->group )->get();
             $group= Auth::user()->group;
             if($request->allzoon){
@@ -94,34 +83,10 @@ class SupController extends Controller
             $dateFrom=str_replace($persian_num, $latin_num, $dateFrom);
             $dateUpTo= $request->upTo;
             $dateUpTo=str_replace($persian_num, $latin_num, $dateUpTo);
-//dd($users);
 
-            // if($request->agent){
-
-            //     $agents_option=$request->agent;
-            //     $viewSum= AgentGroupSummaryReport::whereIn('AgentID',$agents_option)
-            //     ->whereBetween('DATE',[$dateFrom, $dateUpTo])->get();
-            // }else{
-            //     $viewSum= AgentGroupSummaryReport::whereIn('AgentID',$agent_select)
-            //     ->whereBetween('DATE',[$dateFrom, $dateUpTo])->get();
-            // }
             $viewSum= AgentGroupSummaryReport::whereIn('AgentID',$request->agent ?? [])
                  ->whereBetween('DATE',[$dateFrom, $dateUpTo])->get();
 
-
-
-
-
-
-        //$result = $viewSum->merge($viewPer);
-
-        //dd($viewSum);
-
-//            paginate(50)->appends(request()->query());;
-//        ($view);
-
-            //$olddate= Request::flashOnly('dateFrom', 'dateUpTo');
-            //dd($request->agent);
             return view('admin.view',compact('viewSum','users', 'agents', 'dateFrom','dateUpTo'));
 
 
@@ -145,7 +110,6 @@ class SupController extends Controller
         $agent= Agent::where('position',$group)->get();
         $agents=Agent::all();
 
-        // $agent_select= Agent::where('position',$group)->where('status',1)->get('agent');
 
         //arrays of persian and latin numbers
         $persian_num = array('۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹');
@@ -157,17 +121,7 @@ class SupController extends Controller
         //$dateFrom= Carbon::createFromDate($dateFrom)->isoFormat('YYYY-MM-DD');
         $dateUpTo= $request->upTo;
         $dateUpTo=str_replace($persian_num, $latin_num, $dateUpTo);
-        //$dateUpTo= str_replace('/','-',$dateUpTo);
-        //$dateUpTo= Carbon::createFromDate($dateUpTo)->isoFormat('YYYY-MM-DD');
 
-        // if($request->agent){
-        //     $agents_option=$request->agent;
-        //     $viewPer= AgentPerformanceReport::whereIn('AgentID',$agents_option)
-        //     ->whereBetween('Date',[$dateFrom, $dateUpTo])->get();
-        // }else{
-        //     $viewPer= AgentPerformanceReport::whereIn('AgentID',$agent_select)
-        //     ->whereBetween('Date',[$dateFrom, $dateUpTo])->get();
-        // }
         $viewPer= AgentPerformanceReport::whereIn('AgentID',$request->agent ?? [])
              ->whereBetween('Date',[$dateFrom, $dateUpTo])->get();
 
@@ -246,26 +200,7 @@ class SupController extends Controller
         $viewdSum= AgentGroupSummaryReport::whereIn('AgentID',$agent_select)
             ->whereBetween('DATE',[$dateFrom, $dateUpTo])->get();
 
-//        $merged = $viewdSum->merge($viewdPer);
-        //dd($merged);
-//        $merged->each(function($record)
-//        {
-//            echo $record->fieldName.'<br />';
-//});
 
-//        $viewdPsm = $merged->all();
-//        dd($merged);
-
-
-//        $ttttttt= array_combine($viewdPer, $viewdSum);
-//        dd($ttttttt);
-
-//        $mi = new MultipleIterator();
-//        $mi->attachIterator(new ArrayIterator($viewdPer));
-//        $mi->attachIterator(new ArrayIterator($viewdSum));
-//        foreach($mi as list($viewdPerdata, $viewdSumdata)) {
-//            dd($viewdPerdata,$viewdSumdata);
-//        }
 
 
 
@@ -362,20 +297,45 @@ class SupController extends Controller
         Agent::where('agent',$request->agent)->delete();
         return back();
     }
-    public function usersView(){
-        $show_user= User::get();
+    public function usersView(Request $request){
+
+
+if($request->name){
+    if(Auth::user()->privilege ==5){
+        $users=User::pluck('id')->toArray();
+    }else{
+        $users=User::where('zoon',Auth::user()->zoon)->pluck('id')->toArray();
+    }
+    $show_user=User::whereIn('id',$users)->where('name','like','%'.$request->name.'%')->paginate('10');
+}elseif(Auth::user()->privilege ==1){
+    $show_user= User::where('zoon',Auth::user()->zoon)->paginate('25');
+
+}elseif(Auth::user()->privilege ==5){
+    $show_user= User::paginate('25');
+
+}else{
+    $show_user= User::where('position', Auth::user()->group)->orWhere('group',Auth::user()->group)->paginate('25');
+}
+
+
         return view('admin/show_users', compact('show_user'));
     }
 
     public function usersEdit(Request $request){
+        $zoons=zoon::get();
+        $zoon=zoon::where('name',Auth::user()->zoon)->first();//dd($zoon);
+        $groups=group::where('zoon_id', $zoon->id)->get();//dd($groups);
+        if(Auth::user()->privilege == 5){
+            $groups=group::get();
+        }
         $user= User::where('id',$request->id)->first();
-        return view('admin/edit_users', compact('user'));
+        return view('admin/edit_users', compact('user','zoons','groups'));
     }
 
     public function usersUpdate(Request $request){
         $oldPrv= User::where('id',$request->id)->pluck('privilege');
-        $oldpass=User::where('id',$request->id)->pluck('password');
         $privileage=$request->privilege ?? $oldPrv[0];
+//dd($request->password);
 //dd(Hash::make($request->password));
         User::find($request->id)
         ->update([
@@ -388,11 +348,20 @@ class SupController extends Controller
            'grade' => $request->grade,
            'zoon' => $request->zoon,
            'agent' => $request->agent,
-           'password' => Hash::make($request->password) ?? $oldpass[0],
 
         ]);
         return redirect('admin/show_users');
     }
+public function chPass(Request $request){
+    User::find($request->id)
+    ->update([
+
+       'password' => Hash::make($request->password),
+
+    ]);
+    return redirect('admin/show_users');
+
+}
 
     public function upload(Request $request){
         $request->validate([
@@ -428,8 +397,5 @@ class SupController extends Controller
             }
 
     }
-    public function viewZoon_group(){
-        return view('admin.zoonGroup');
 
-    }
 }

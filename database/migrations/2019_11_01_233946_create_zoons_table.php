@@ -15,7 +15,6 @@ class CreateZoonsTable extends Migration
     {
         Schema::create('zoons', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('row');
             $table->string('name');
             $table->timestamps();
         });

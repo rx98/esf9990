@@ -27,17 +27,13 @@
 
                         <div class="form-group">
                             <label for="sex"> جنیست: </label>
-                            <select id="sex" type="checkbox" class="form-control{{ $errors->has('sex') ? ' is-invalid' : '' }}" name="sex"  required>
+                            <select id="sex" type="checkbox" class="form-control{{ $errors->has('sex') ? ' is-invalid' : '' }}" name="sex" required>
                                 <option selected value="1">مرد</option>
-                                <option value="">زن</option>
+                                <option value="0">زن</option>
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label for="password"> رمز عبور: </label>
-                            <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password">
 
-                        </div>
 
                         <div class="form-group">
                             <label for="grade"> تحصیلات: </label>
@@ -48,9 +44,9 @@
                                 <option value="فوق‌لیسانس">فوق‌لیسانس</option>
                                 <option value="دکتری">دکتری</option>
                             </select>
-                            @if ($errors->has('number'))
+                            @if ($errors->has('grade'))
                                 <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('number') }}</strong>
+                                    <strong>{{ $errors->first('grade') }}</strong>
                                 </span>
                             @endif
                             </div>
@@ -58,14 +54,10 @@
                             <div class="form-group">
                                     <label for="zoon"> مرکز: </label>
                                     <select id="zoon" type="checkbox" class="form-control{{ $errors->has('zoon') ? ' is-invalid' : '' }}" name="zoon" required>
-                                        <option value="MCI">MCI</option>
-                                        <option selected value="تهران">تهران</option>
-                                        <option value="اصفهان">اصفهان</option>
-                                        <option value="تبریز">تبریز</option>
-                                        <option value="مشهد">مشهد</option>
-                                        <option value="اهواز">اهواز</option>
-                                        <option value="شیراز">شیراز</option>
-                                        <option value="اراک">اراک</option>
+                                            <option value="">انتخاب کنید</option>
+                                            @foreach ($zoons as $zoon)
+                                            <option value="{{$zoon->name}}">{{$zoon->name}}</option>
+                                            @endforeach
                                     </select>
                                     @if ($errors->has('number'))
                                         <span class="invalid-feedback" role="alert">
@@ -82,28 +74,56 @@
                         <div class="form-group">
                             <label for="group">گروه سوپروایزر(برای کارشناس پاسخگو خالی باشد): <span style="color: red">{{$user->group}}</span></label>
                             <select id="group" name="group" class="form-control">
-                                <option value="">انتخاب کنید</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
+                                    <option value="">انتخاب کنید</option>
+                                    @foreach ($groups as $group)
+                                    <?php $zoon=''; if ($group->zoon_id ==1){
+                                        $zoonn= 'بابل';
+                                    }elseif($group->zoon_id ==2){
+                                        $zoonn= 'تهران';
+                                    }elseif($group->zoon_id ==3){
+                                        $zoonn= 'اصفهان';
+                                    }elseif($group->zoon_id ==4){
+                                        $zoonn= 'تبریز';
+                                    }elseif($group->zoon_id ==5){
+                                        $zoonn= 'مشهد';
+                                    }elseif($group->zoon_id ==6){
+                                        $zoonn= 'اهواز';
+                                    }elseif($group->zoon_id ==7){
+                                        $zoonn= 'شیراز';
+                                    }elseif($group->zoon_id ==8)
+                                        $zoonn= 'اراک'
+
+                                        ?>
+                                    <option value="{{$group->row}}">{{$group->sup.'-'.$group->qa.'-'.$zoonn}}</option>
+                                    @endforeach
                             </select>
                         </div>
 
                         <div class="form-group">
-                                <label for="group">گروه کارشناس پاسخگو: <span style="color: red">{{$user->position}}</span></label>
-                                <select id="group" name="position" class="form-control">
-                                    <option value="">انتخاب کنید</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
+                                <label for="group">گروه کارشناس پاسخگو (برای کارشناس پاسخگو پر شود): <span style="color: red">{{$user->position}}</span></label>
+                                <select id="position" name="position" class="form-control">
+                                        <option value="">انتخاب کنید</option>
+                                        @foreach ($groups as $group)
+<?php $zoon=''; if ($group->zoon_id ==1){
+    $zoonn= 'بابل';
+}elseif($group->zoon_id ==2){
+    $zoonn= 'تهران';
+}elseif($group->zoon_id ==3){
+    $zoonn= 'اصفهان';
+}elseif($group->zoon_id ==4){
+    $zoonn= 'تبریز';
+}elseif($group->zoon_id ==5){
+    $zoonn= 'مشهد';
+}elseif($group->zoon_id ==6){
+    $zoonn= 'اهواز';
+}elseif($group->zoon_id ==7){
+    $zoonn= 'شیراز';
+}elseif($group->zoon_id ==8)
+    $zoonn= 'اراک'
+
+    ?>
+                                        <option value="{{$group->row}}">{{$group->sup.'-'.$group->qa.'-'.$zoonn}}</option>
+                                        @endforeach
                                 </select>
                             </div>
                         @if(Auth::user()->privilege == 1 || Auth::user()->privilege ==5)
@@ -130,6 +150,19 @@
 
 
                 </form>
+                <form action="{{asset('admin/edit_pass')}}" method="post" role="form">
+                    {{csrf_field()}}
+                <div class="form-group">
+                    <input name="id" type="hidden" value="{{$user->id}}">
+                    <label for="password"> تغییر رمز عبور: </label>
+                    <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
+
+                </div>
+                <div class="box-footer">
+                    <button type="submit" id="passCh" class="btn btn-primary">تغییر رمزعبور</button>
+                </div>
+            </form>
+
 
                 <form enctype="multipart/form-data" action="{{asset('admin/upload_image')}}" method="post" role="form">
                     {{csrf_field()}}

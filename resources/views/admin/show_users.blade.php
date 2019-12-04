@@ -11,6 +11,19 @@
         {{--}--}}
     {{--</style>--}}
         <div class="box-body table-responsive">
+                <form method="get" action="{{asset('/admin/show_users')}}">
+                    <div style="margin-top: 10px">
+                        <label for="number">نام و نام خانوادگی</label>
+                        <input value="{{$_GET['name'] ?? ''}}" type="text" id="name" name="name" placeholder="جستجو">
+
+                        <span>
+                                <button type="submit" class="btn btn-default btn-xs"><i class="fa fa-search"></i></button>
+                            </span>
+
+                        <a href="{{asset('/admin/show_users')}}" type="submit" class="btn btn-default btn-xs"><i class="fa fa-close"></i></a>
+
+                    </div>
+                </form>
 
                     <table id="gent" class="table table-bordered table-striped box-footer clearfix ">
                         <thead>
@@ -38,11 +51,11 @@
                                 <td> @if($sU->sex == 1)مرد @else زن @endif </td>
                                 <td>{{$sU->grade}}</td>
                                 <td>{{$sU->zoon}}</td>
-                                <td>{{$sU->group}}</td>
+                                <td style="color:@if($sU->group) blue @else magenta @endif">{{$sU->group ?? $sU->position}}</td>
                                 <td>
 
-                                    <a @if(Auth::user()->privilege == 1 || Auth::user()->privilege == 5 || Auth::user()->id == $sU->id) href="{{asset('admin/edit_users?id=')}}{{$sU->id}}" class="btn btn-warning btn-xs glyphicon glyphicon-edit" @endif></a>
-                                    <a @if(Auth::user()->privilege == 1 || Auth::user()->privilege == 5) onclick="return confirm('برای پاک کردن خاطرجمع هستید؟')" href="{{asset('admin/dell_users?id=')}}{{$sU->id}}" class="btn btn-danger btn-xs glyphicon glyphicon-trash" @endif></a>
+                                    <a @if(Auth::user()->privilege == 1 || Auth::user()->group === $sU->group || Auth::user()->group === $sU->position || Auth::user()->privilege == 5) href="{{asset('admin/edit_users?id=')}}{{$sU->id}}" class="btn btn-warning btn-xs glyphicon glyphicon-edit" @endif></a>
+                                    <a @if(Auth::user()->privilege == 1 || Auth::user()->group === $sU->group || Auth::user()->group === $sU->position || Auth::user()->privilege == 5) onclick="return confirm('برای پاک کردن خاطرجمع هستید؟')" href="{{asset('admin/dell_users?id=')}}{{$sU->id}}" class="btn btn-danger btn-xs glyphicon glyphicon-trash" @endif></a>
 
                                 </td>
 
@@ -59,7 +72,7 @@
                         </tfoot>
 
                     </table>
-
+{{$show_user->appends($_GET)->links()}}
         </div>
 
 

@@ -15,8 +15,9 @@ class CreateGroupsTable extends Migration
     {
         Schema::create('groups', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigIncrements('zoon_id');
-            $table->bigIncrements('row');
+            $table->bigInteger('zoon_id')->nullable()->unsigned();
+            $table->foreign('zoon_id')->references('id')->on('zoons');
+            $table->integer('row');
             $table->string('sup');
             $table->string('qa');
             $table->timestamps();

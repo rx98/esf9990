@@ -1,21 +1,19 @@
+<?php $zoons= \App\zoon::get();?>
+
 <div style="margin-top: 30px; clear: both;"></div>
     <div class="container" style="max-width: 200px;">
         <div class="form-group" >
 
                     @if(Auth::user()->privilege ==5)
-                    <div class="form-group">انتخاب مرکز
+                    <div class="form-group">
                         <form>
-                            <select name="zoons" class="form-control select2" data-placeholder="انتخاب مرکز" style="width: 100%;">
-                                    <option value="">انتخاب کنید</option>
-                                    <option value="تهران">تهران</option>
-                                    <option value="اصفهان">اصفهان</option>
-                                    <option value="تبریز">تبریز</option>
-                                    <option value="مشهد">مشهد</option>
-                                    <option value="اهواز">اهواز</option>
-                                    <option value="شیراز">شیراز</option>
-                                    <option value="اراک">اراک</option>
+                            <select name="zoons" class="form-control">
+                                <option value="">انتخاب مرکز</option>
+                                @foreach ($zoons as $zoon)
+                                <option value="{{$zoon->name}}">{{$zoon->name}}</option>
+                                @endforeach
                             </select>
-                            <button type="submit" style="margin-top: 5px" class="btn btn-info btn-xs">انتخاب مرکز</button>
+                        <button type="submit" style="margin-top: 5px" class="btn btn-info btn-xs">انتخاب مرکز</button>
 
                         </form>
                 </div> @endif
@@ -38,7 +36,6 @@
 
                 <div class="form-group">
                         <select name="agent[]" class="form-control select2" multiple="multiple" data-placeholder="انتخاب کارشناس" style="width: 100%;">
-                            <option value="">انتخاب کنید</option>
                             @foreach ($users as $agts)
                                 <option value="{{$agts->agent}}">{{$agts->name.'-'.$agts->agent}}</option>
                             @endforeach

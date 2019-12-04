@@ -2,24 +2,59 @@
 @section('title','خطاهای داخلی')
 @section('content')
 
+<?php $zoons= \App\zoon::get();?>
 
     <div class="container" style="max-width: 200px;">
         <div class="form-group" >
-            <form method="get" action="{{asset('/admin/quality_show')}}">
-                {{--{{csrf_field()}}--}}
-                <div class="input-group">
-                    <div class="input-group-addon" data-mddatetimepicker="true" data-trigger="click" data-targetselector="#fromDate2" data-groupid="group2" data-fromdate="true" data-enabletimepicker="false" data-placement="left">
-                        <span class="fa fa-calendar"></span>
-                    </div>
-                    <input name="from" type="text" value="@if($dateFrom){{$dateFrom}} @endif" class="form-control" id="fromDate2" placeholder="از تاریخ" data-mddatetimepicker="true" data-trigger="click" data-targetselector="#fromDate2" data-groupid="group2" data-fromdate="true" data-enabletimepicker="false" data-placement="right" />
+                <a href="{{asset('admin/quality_show')}}" style="margin: 1px 6px 0 0" class="btn btn-info btn-xs">فقط گروه</a>
+                <div class="form-group">
+                        <form>
+                            <input type="hidden" name="allzoon" value="1">
+                            <button type="submit" style="margin:4px 8px 0 0" class="btn btn-info btn-xs">کل مرکز</button>
+                        </form>
                 </div>
 
-                <div class="input-group">
-                    <div class="input-group-addon" data-mddatetimepicker="true" data-trigger="click" data-targetselector="#toDate2" data-groupid="group2" data-todate="true" data-enabletimepicker="false" data-placement="left">
-                        <span class="fa fa-calendar"></span>
+                @if(Auth::user()->privilege ==5)
+                <div class="form-group">
+                    <form>
+                        <select name="zoons" class="form-control">
+                            <option value="">انتخاب مرکز</option>
+                            @foreach ($zoons as $zoon)
+                            <option value="{{$zoon->name}}">{{$zoon->name}}</option>
+                            @endforeach
+                        </select>
+                    <button type="submit" style="margin-top: 5px" class="btn btn-info btn-xs">انتخاب مرکز</button>
+
+                    </form>
+                </div> @endif
+            <form method="get" action="{{asset('/admin/quality_show')}}">
+                {{--{{csrf_field()}}--}}
+
+
+                    <div class="input-group">
+                            <div class="input-group-addon" data-mddatetimepicker="true" data-trigger="click" data-targetselector="#fromDate2" data-groupid="group2" data-fromdate="true" data-enabletimepicker="false" data-placement="left">
+                                <span class="fa fa-calendar"></span>
+                            </div>
+                            <input name="from" type="text" value="@if($dateFrom){{$dateFrom}} @endif" class="form-control" id="fromDate2" placeholder="از تاریخ" data-mddatetimepicker="true" data-trigger="click" data-targetselector="#fromDate2" data-groupid="group2" data-fromdate="true" data-enabletimepicker="false" data-placement="right" />
                     </div>
-                    <input name="upTo" type="text" value="@if($dateFrom){{$dateUpTo}} @endif" class="form-control" id="toDate2" placeholder="تا تاریخ" data-mddatetimepicker="true" data-trigger="click" data-targetselector="#toDate2" data-groupid="group2" data-todate="true" data-enabletimepicker="true" data-placement="right" />
-                </div>
+
+                        <div class="input-group">
+                            <div class="input-group-addon" data-mddatetimepicker="true" data-trigger="click" data-targetselector="#toDate2" data-groupid="group2" data-todate="true" data-enabletimepicker="false" data-placement="left">
+                                <span class="fa fa-calendar"></span>
+                            </div>
+                            <input name="upTo" type="text" value="@if($dateFrom){{$dateUpTo}} @endif" class="form-control" id="toDate2" placeholder="تا تاریخ" data-mddatetimepicker="true" data-trigger="click" data-targetselector="#toDate2" data-groupid="group2" data-todate="true" data-enabletimepicker="true" data-placement="right" />
+                        </div>
+
+
+                        <div class="form-group">
+                                <select name="agent[]" class="form-control select2" multiple="multiple" data-placeholder="انتخاب کارشناس" style="width: 100%;">
+                                    @foreach ($users as $agts)
+                                        <option value="{{$agts->agent}}">{{$agts->name.'-'.$agts->agent}}</option>
+                                    @endforeach
+                                </select>
+                        </div>
+
+
                 <div class="col col-xs-12" style="margin-top: 5px">
                     <label for="Communicated"> وضعیت ابلاغ </label>
                     <select name="Communicated" id="Communicated" class="form-control select2" style="width: 100%;margin: 0 -13px 0 0">
@@ -28,11 +63,13 @@
                     </select>
                 </div>
 
-
                 <button type="submit" style="margin-top: 5px" class="btn btn-primary btn-md">نمایش اطلاعات</button>
             </form>
+
         </div>
     </div>
+
+
 
 
         <div class="row">
