@@ -301,7 +301,7 @@ class SupController extends Controller
 
 
 if($request->name){
-    if(Auth::user()->privilege ==5){
+    if(Auth::user()->privilege ==5 ||Auth::user()->zoon =='MCI'){
         $users=User::pluck('id')->toArray();
     }else{
         $users=User::where('zoon',Auth::user()->zoon)->pluck('id')->toArray();
@@ -322,9 +322,16 @@ if($request->name){
     }
 
     public function usersEdit(Request $request){
+		
         $zoons=zoon::get();
+		//dd($zoons);
+		
         $zoon=zoon::where('name',Auth::user()->zoon)->first();//dd($zoon);
+		if($zoon == null){
+			return back()->withErrors(['ابتدا در قسمت مدیریت گروه ها و مراکز  اطلاعات مرکز خود را کامل کنید']);
+		}
         $groups=group::where('zoon_id', $zoon->id)->get();//dd($groups);
+		
         if(Auth::user()->privilege == 5){
             $groups=group::get();
         }

@@ -107,7 +107,7 @@
                 </ul>
 
                 <ul>
-                    <li> <a style="color: white" style="color: white" class="fa fa-sticky-note" href="{{asset('admin/view_no')}}"> جوابیه تیکت‌ مشترکین شاکی </a> </li>
+                    <li> <a style="color: white" style="color: white" class="fa fa-sticky-note" href="{{asset('admin/view_no')}}"> جوابیه نمونه شماره </a> </li>
                 </ul>
 
                 <ul>
@@ -124,7 +124,7 @@
             <!-- /.search form -->
             <!-- sidebar menu: : style can be found in sidebar.less -->
 
-            @if(Auth::user()->group != null && Auth::user()->privilege != 3)
+            @if(Auth::user()->privilege != null && Auth::user()->privilege != 3)
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">منو</li>
                 <li class="active treeview">

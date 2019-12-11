@@ -1,15 +1,8 @@
 @extends('admin.layout')
 @section('title','نمایش کاربرها')
 @section('content')
-    {{--<style>--}}
-        {{--td:hover a {--}}
-            {{--/*top   : -20px;*/--}}
-            {{--color : #4eacff;--}}
-            {{--background-color: #fff;--}}
-            {{--box-shadow : 0 0 5px 0 rgba(255, 255, 255, 0.7);--}}
-            {{--transition : all .4s;--}}
-        {{--}--}}
-    {{--</style>--}}
+   
+	@include('error')
         <div class="box-body table-responsive">
                 <form method="get" action="{{asset('/admin/show_users')}}">
                     <div style="margin-top: 10px">
@@ -44,7 +37,7 @@
 
                         @foreach($show_user as $sU)
                             <tr>
-                                <td><img STYLE="width: 25%; height: auto" src="{{asset($sU->image)}}"></td>
+                                <td><img STYLE="width: 15%; height: auto" src="{{asset($sU->image)}}"></td>
                                 <td>{{$sU->name}}</td>
                                 <td>{{$sU->email}}</td>
                                 <td>{{$sU->agent}}</td>

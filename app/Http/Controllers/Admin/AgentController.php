@@ -69,10 +69,17 @@ return redirect('admin/view_no');
         }
 
         if (Auth::user()->zoon === 'MCI' || Auth::user()->privilege === 3){
+			if ($request->number){
+            $viewNo= SendNo::whereIN('status',[1, 2, 3])->where('number','like','%'.$request->number.'%')->paginate('10');
+			}else{
             $viewNo= SendNo::whereIN('status',[1, 2, 3])->paginate('10');
+			}
+			
         }elseif ($request->number){
+			
 
             $viewNo=SendNo::whereIn('user_id',$users)->where('number','like','%'.$request->number.'%')->paginate('10');
+			
         }else{
             $viewNo= SendNo::whereIn('user_id',$users)->paginate('10');//مشاهده تفکیکی برای هر زون اصلاح شود.
 

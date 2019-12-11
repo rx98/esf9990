@@ -19,6 +19,7 @@ class CreateSendNosTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('number');
             $table->longText('comment');
+			$table->integer('agent')->nullable();
             $table->timestamps();
         });
     }

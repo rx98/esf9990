@@ -20,7 +20,8 @@
         <div class="box-body">
             محتوای مشکل: {{$select_no->comment ?? ''}}<br>
             شماره: {{$select_no->number ?? ''}}<br>
-            پاسخ: {{$select_no->result ?? ''}}
+            پاسخ: 
+			<pre>{{$select_no->result ?? ''}}</pre>
 
         </div>
         <!-- /.box-body -->
@@ -32,7 +33,7 @@
                 <input name="id" type="hidden" value="{{$select_no->id ?? 0}}">
                 <div class="form-group">
                     <label for="result">راهکار یا نتیجه:</label>
-                    <textarea name="result"  class="form-control" id="name" required autofocus></textarea>
+                    <textarea cols="auto" name="result"  class="form-control" id="name" required autofocus>{{$select_no->result ?? ''}}</textarea>
                 </div>
                 <div class="box-footer">
                     <button type="submit" id="user" class="btn btn-xs btn-primary">ارسال نتیجه</button>
@@ -104,7 +105,7 @@
                                 <tr>
 
                                     <td>{{$Row}}</td><?php $Row ++;
-                                    if (strpos($vi->number, '0') == 0){
+                                    if (strpos($vi->number, '0') === 0){
                                         $number= substr($vi->number, 1);
                                     }else{
                                         $number= $vi->number;
@@ -122,7 +123,7 @@
                                     <td>
                                         <a href="@if(Auth::user()->privilege == 3)# @else {{asset('admin/send_box?id=')}}{{$vi->id}} @endif" class=" btn btn-@if($vi->status == null)default @elseif($vi->status == 1)warning @elseif($vi->status == 2)danger @elseif($vi->status == 3)success @endif btn-xs glyphicon glyphicon-send"></a>
                                     <a href="{{asset('admin/view_no?id=')}}{{$vi->id}}&page={{$_REQUEST['page'] ?? ''}}" class=" btn btn-info btn-xs glyphicon glyphicon-folder-open"></a>
-                                        <a href=" @if(Auth::user()->privilege == 3)# @else{{asset('admin/del_no?id=')}}{{$vi->id}}&page={{$_REQUEST['page'] ?? ''}} @endif" class=" btn btn-danger btn-xs glyphicon glyphicon-trash"></a>
+                                        @if(Auth::user()->zoon != 'MCI')<a href=" @if(Auth::user()->privilege == 3)# @else{{asset('admin/del_no?id=')}}{{$vi->id}}&page={{$_REQUEST['page'] ?? ''}} @endif" class=" btn btn-danger btn-xs glyphicon glyphicon-trash"></a>@endif
                                     </td>
                                     <td></td>
 
